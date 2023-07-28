@@ -2,8 +2,10 @@ import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { useStore } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
+import { ApolloProvider } from '@apollo/client'
 
 import { wrapper } from '@/context/store'
+import client from '@/lib/apollo-client'
 
 const App: React.FC<AppProps> = ({
 	Component,
@@ -13,9 +15,11 @@ const App: React.FC<AppProps> = ({
 
 	return (
 		<PersistGate persistor={store.__persistor} loading={<div>Loading</div>}>
-			<SessionProvider session={session}>
-				<Component {...pageProps} />
-			</SessionProvider>
+			<ApolloProvider client={client}>
+				<SessionProvider session={session}>
+					<Component {...pageProps} />
+				</SessionProvider>
+			</ApolloProvider>
 		</PersistGate>
 	)
 }
