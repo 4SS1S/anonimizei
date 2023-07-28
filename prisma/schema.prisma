@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@unique([providerId, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id                  String              @id @default(cuid())
+  name                String?
+  email               String?             @unique
+  emailVerified       DateTime?
+  image               String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  deletedAt           DateTime?
+  accounts            Account[]
+  sessions            Session[]
+  Response            Response[]
+  questionarioAdmin   QuestionAdmin[]
+  friendshipRequest   FriendshipRequest[] @relation(name: "user")
+  FriendshipRequested FriendshipRequest[] @relation(name: "requested")
+}
+
+model VerificationRequest {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, token])
+}
+
+model FriendshipRequest {
+  id          String    @id @default(cuid())
+  requesterId String
+  requestedId String
+  requester   User      @relation(name: "user", fields: [requesterId], references: [id])
+  requested   User      @relation(name: "requested", fields: [requestedId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([requesterId, requestedId])
+}
+
+model Question {
+  id            String          @id @default(cuid())
+  userId        String?
+  friendsId     String
+  response      Response[]
+  QuestionAdmin QuestionAdmin[]
+}
+
+model QuestionAdmin {
+  id         String          @id @default(cuid())
+  userId     String?
+  questionId String
+  role       QUEST_USER_ROLE
+  question   Question        @relation(fields: [questionId], references: [id])
+  User       User?           @relation(fields: [userId], references: [id])
+  expires    DateTime
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  deletedAt  DateTime?
+}
+
+model Response {
+  id         String    @id @default(cuid())
+  questionId String
+  response   String
+  userId     String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  question   Question  @relation(fields: [questionId], references: [id])
+  to         User      @relation(fields: [userId], references: [id])
+}
+
+enum QUEST_USER_ROLE {
+  administrador
+  invited
+}
