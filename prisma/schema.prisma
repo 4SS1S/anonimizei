@@ -81,8 +81,10 @@ model FriendshipRequest {
 
 model Question {
   id            String          @id @default(cuid())
-  userId        String?
-  friendsId     String
+  expires       DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
   response      Response[]
   QuestionAdmin QuestionAdmin[]
 }
@@ -92,12 +94,12 @@ model QuestionAdmin {
   userId     String?
   questionId String
   role       QUEST_USER_ROLE
-  question   Question        @relation(fields: [questionId], references: [id])
-  User       User?           @relation(fields: [userId], references: [id])
   expires    DateTime
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
   deletedAt  DateTime?
+  question   Question        @relation(fields: [questionId], references: [id])
+  User       User?           @relation(fields: [userId], references: [id])
 }
 
 model Response {
