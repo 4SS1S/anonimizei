@@ -6,6 +6,7 @@ import { ApolloProvider } from '@apollo/client'
 
 import { wrapper } from '@/context/store'
 import client from '@/lib/apollo-client'
+import '@/styles/globals.css'
 
 const App: React.FC<AppProps> = ({
 	Component,
