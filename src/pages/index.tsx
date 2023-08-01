@@ -1,24 +1,11 @@
-import { useSession, signIn } from 'next-auth/react'
-
-import { GoogleButton } from '@/components'
-
 export default function Home() {
-	const { status, data } = useSession()
+	return (
+		<>
+			<h1 className="font-bold text-4xl h-1 text-center block pb-12">
+				Bem vindo ao Anonimos Girafinas
+			</h1>
 
-	const handleGoogleLogin = () => {
-		return signIn('google')
-	}
-
-	if (status === 'unauthenticated') {
-		return (
-			<>
-				<div>
-					Já tem uma conta? faça o login
-					<GoogleButton onClick={handleGoogleLogin} />
-				</div>
-			</>
-		)
-	}
-
-	return <>Reloading the application to right page</>
+			<p>Aqui você pode fazer suas perguntas anonimas</p>
+		</>
+	)
 }

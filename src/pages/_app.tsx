@@ -7,6 +7,7 @@ import { ApolloProvider } from '@apollo/client'
 import { wrapper } from '@/context/store'
 import client from '@/lib/apollo-client'
 import '@/styles/globals.css'
+import { Navbar } from '@/components'
 
 const App: React.FC<AppProps> = ({
 	Component,
@@ -18,6 +19,7 @@ const App: React.FC<AppProps> = ({
 		<PersistGate persistor={store.__persistor} loading={<div>Loading</div>}>
 			<ApolloProvider client={client}>
 				<SessionProvider session={session}>
+					<Navbar />
 					<Component {...pageProps} />
 				</SessionProvider>
 			</ApolloProvider>
